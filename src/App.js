@@ -1,7 +1,6 @@
 import './App.css';
 
 import { Header } from './components/header/header';
-import SearchBar from './components/header/searchBar/searchBar';
 
 function App() {
   return (
@@ -21,7 +20,6 @@ function App() {
         </a>
       </header>*/}
       <Header />
-      <SearchBar />
     </div> 
 
   );
