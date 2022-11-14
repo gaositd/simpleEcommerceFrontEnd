@@ -13,13 +13,12 @@
     <link rel="stylesheet" href="./css/image.css" />
     <link rel="stylesheet" href="./css/input.css" />
     <link rel="stylesheet" href="./css/cardCss.css" />
-    <Link rel="stylesheet" href="./css/BtnCss.css" />
+    <link rel="stylesheet" href="./css/BtnCss.css" />
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3"
       crossorigin="anonymous"
     ></script>
-    <script src="./js/getAllProducts.js"></script>
     <script src="./js/jquery-3.6.1.min.js"></script>
     <title>Reto BSale todos los productos</title>
   </head>
@@ -33,8 +32,7 @@
             class="imgSize"
           />
         </div>
-        <div class="col-9">
-          <form method="get" action="#" class="form">
+        <div class="col-9 formSearch">
             <input
               type="text"
               name="search"
@@ -43,79 +41,100 @@
               aria-placeholder="search products"
               class="form-control searchProduct"
             />
-            <button type="button" class="btn btn-light">Buscar producto</button>
-          </form>
+            <button
+              type="button"
+              class="btn btn-light"
+              onclick={getList()}
+            >
+              Buscar producto
+            </button>
         </div>
       </div>
     </header>
-    <main class="container mt-lg-5" id="dataFromBackEnd"> </main>
+    <main class="container mt-lg-5" id="dataFromBackEnd"></main>
     <footer></footer>
     <script>
       $.get("http://localhost:3456/allproducts", (allProducts) => {
-        let dataFromBackEnd = document.querySelector("#dataFromBackEnd"); //contenedor principal
-        //crear elementos de la tarjeta
+        let dataFromBackEnd = document.querySelector("#dataFromBackEnd");
         let Row;
 
         allProducts.forEach((product, i) => {
-          
-          if( i % 4 === 0){
-            Row = document.createElement('div');
+          if (i % 4 === 0) {
+            Row = document.createElement("div");
             Row.className = "row m-1";
-            Row.id = "Row"+i;
-            document.getElementById('dataFromBackEnd').appendChild(Row);
-            console.log(dataFromBackEnd);
+            Row.id = "Row" + i;
+            document.getElementById("dataFromBackEnd").appendChild(Row);
           }
           const Card = document.createElement("div");
-          Card.id = "Card"+i;
+          Card.id = "Card" + i;
           Card.querySelector(`${Card.id}`);
-          Card.className="card m-1 cardSize";
+          Card.className = "card m-1 cardSize";
 
           const Img = document.createElement("img");
-          // Img.src = product.url_image;
           product.url_image
-            ? Img.src = product.url_image
-            : Img.src = './images/sad-crying-face-clip-art-8.jpg'
-          Img.className="card-img-top imgDrinkSize";
+            ? (Img.src = product.url_image)
+            : (Img.src = "./images/sad-crying-face-clip-art-8.jpg");
+          Img.className = "card-img-top imgDrinkSize";
           Img.alt = product.url_image;
-          Img.id = "Img"+i;
+          Img.id = "Img" + i;
           Img.querySelector(Img.id);
 
           const Card_Body = document.createElement("div");
-          Card_Body.className="card-body";
-          Card_Body.id = "Card_Body"+i;
+          Card_Body.className = "card-body";
+          Card_Body.id = "Card_Body" + i;
 
           const Card_Title = document.createElement("h5");
-          Card_Title.className="card-title";
-          Card_Title.id = "Card_Title"+i;
+          Card_Title.className = "card-title";
+          Card_Title.id = "Card_Title" + i;
           Card_Title.innerHTML = product.name;
 
           const Card_Text = document.createElement("p");
-          Card_Text.className="card-text";
-          Card_Text.id = "Card_Text"+i;
-          let discount = product.discount > 0
-            ? `Actual = $${product.price}, promoción = $${product.price / ( (product.discount / 100) + 1)}.`
-            :`$${product.price}`;
+          Card_Text.className = "card-text";
+          Card_Text.id = "Card_Text" + i;
+          let discount =
+            product.discount > 0
+              ? `Actual = $${product.price}, promoción = $${
+                  product.price / (product.discount / 100 + 1)
+                }.`
+              : `$${product.price}`;
           Card_Text.innerHTML = `${discount}`;
 
           const Btn = document.createElement("a");
-          Btn.id = "Btn"+i;
+          Btn.id = "Btn" + i;
           Btn.querySelector(`#Btn${i}`);
-          Btn.text="Comprar producto";
-          Btn.className='btn btn-secondary fontBold';
-          Btn.onclick = function() { alert(`${product.name} agregado satisfactoriamente`)}
+          Btn.text = "Comprar producto";
+          Btn.className = "btn btn-secondary fontBold";
+          Btn.onclick = function () {
+            alert(`${product.name} agregado satisfactoriamente`);
+          };
 
           Card_Body.append(Card_Title);
           Card_Body.append(Card_Text);
           Card_Body.append(Btn);
 
-
           Card.append(Img);
           Card.append(Card_Body);
           Row.querySelector(`${Row.id}`);
           Row.append(Card);
-          
         });
       });
+    </script>
+    <script>
+      function getList() {
+        const search = document.querySelector("#search").value
+
+        search
+          ? $.get("http://localhost:3456/getProductList/" + search, (listProducts) => {
+          let products = "";
+          listProducts.forEach((product) => {
+            products += product.name + ",\n";
+          });
+
+          alert(products);
+        })
+        :alert('Producto inválido');
+        
+      }
     </script>
   </body>
 </html>
