@@ -5,6 +5,7 @@ Este servidor corre bajo el puerto 80, n fue creado para el reto de BSALE.
 Este servidor está construido con JavaScript  y librerías necesarias para su funcionamiento correcto, hace peticiones a un servidor backend construido para este fin, las librerías utilizadas son:
 
 - **JQUERY** para hacer peticiones al servidor backend el cual responde según le sea solicitado
+- **BOOTSTRAP** para darle estilos a la página
 
 #Ejecución del servidor
 
