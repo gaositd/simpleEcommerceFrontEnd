@@ -22,7 +22,7 @@
     <script src="./js/jquery-3.6.1.min.js"></script>
     <title>Reto BSale todos los productos</title>
   </head>
-  <body>
+  <body onLoad="getAllProducts()">
     <header class="container text-center">
       <div class="row mx-lg-1 my-1">
         <div class="col-3">
@@ -52,12 +52,19 @@
       </div>
     </header>
     <main class="container mt-lg-5" id="dataFromBackEnd"></main>
-    <footer></footer>
+    <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+      <div class="col-md-4 d-flex align-items-center">
+        <a href="#" class="mb-3 me-2 mb-md-0 text-muted text-decoration-none lh-1">
+          <img class="imgSize m-md-5" src="./images/happy-face-clipart-20.jpg" alt="happy-face-clipart-20" />
+        </a>
+      </div>
+      <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
+        <span class="text-muted m-md-5">Página hecha con JS y HTML:5 en el front, express y NodeJS en el back</span>
+      </ul>
+    </footer>
     <script>
-      $.get("http://localhost:3456/allproducts", (allProducts) => {
-        let dataFromBackEnd = document.querySelector("#dataFromBackEnd");
-        let Row;
-
+      function showData(allProducts){
+        document.getElementById("dataFromBackEnd").innerHTML = "";
         allProducts.forEach((product, i) => {
           if (i % 4 === 0) {
             Row = document.createElement("div");
@@ -88,15 +95,20 @@
           Card_Title.id = "Card_Title" + i;
           Card_Title.innerHTML = product.name;
 
+          function newPrice(product){
+            let price = 0;
+            price = product.price / (product.discount / 100 + 1);
+            return price.toFixed(2);
+          }
           const Card_Text = document.createElement("p");
           Card_Text.className = "card-text";
           Card_Text.id = "Card_Text" + i;
           let discount =
             product.discount > 0
               ? `Actual = $${product.price}, promoción = $${
-                  product.price / (product.discount / 100 + 1)
+                  newPrice(product)
                 }.`
-              : `$${product.price}`;
+              : `$${product.price.toFixed(2)}`;
           Card_Text.innerHTML = `${discount}`;
 
           const Btn = document.createElement("a");
@@ -117,23 +129,35 @@
           Row.querySelector(`${Row.id}`);
           Row.append(Card);
         });
+      }
+    </script>
+    <script>
+      function getAllProducts() {
+        $.get("http://localhost:3456/allproducts", (allProducts) => {
+        let dataFromBackEnd = document.querySelector("#dataFromBackEnd");
+        let Row;
+        showData(allProducts);
       });
+      }
     </script>
     <script>
       function getList() {
         const search = document.querySelector("#search").value
 
-        search
-          ? $.get("http://localhost:3456/getProductList/" + search, (listProducts) => {
-          let products = "";
-          listProducts.forEach((product) => {
-            products += product.name + ",\n";
-          });
-
-          alert(products);
-        })
-        :alert('Producto inválido');
-        
+        if(search.length > 0){
+          search
+            ? $.get("http://localhost:3456/getProductList/" + search, (listProducts) => {
+              if(listProducts.hasOwnProperty('msg')){
+                getAllProducts();
+                alert(`Product ${listProducts.msg}`);
+              }
+            showData(listProducts);
+          })
+          :alert('Producto inválido');
+        }else{
+          alert("No ingreso producto a buscar, se mostrarán todos");
+          getAllProducts();
+        }
       }
     </script>
   </body>
